@@ -2,6 +2,7 @@ from machine import Timer, unique_id
 import ubinascii
 import time
 import esp32
+import network
 
 from ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker
 
@@ -10,6 +11,22 @@ def get_cpu_temp(self): ## degree celsius
     return int((esp32.raw_temperature() - 32) * (5/9) * 10) /10
 
 ## configure wifi ##
+WIFI_SSID = '<ssid>'
+WIFI_PASSWORD = '<password>'
+
+def do_connect():
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    if not wlan.isconnected():
+        print('connecting to network...')
+        timeout = 10
+        count = 0
+        wlan.connect(WIFI_SSID, WIFI_PASSWORD)
+        while not wlan.isconnected():
+            time.sleep(1)
+            if count > timeout: break
+            count += 1
+    print('network config:', wlan.ifconfig())
 
 # Define your Fichar.io credentials
 username = "your_username"
@@ -48,6 +65,7 @@ fichario.add_new_payload(PayloadPkgMaker(name = "hall",
 
 tim2 = Timer(2)
 def main():
+    do_connect()
     print("starting main function...")
     fichario.just_do_it() ## First run
     tim2.init(period=60000, mode=Timer.PERIODIC, callback=fichario.just_do_it) ## calls "just do it" periodcaly
