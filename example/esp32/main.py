@@ -1,18 +1,18 @@
-from machine import Timer, unique_id
+from machine import Timer, unique_id, Pin
 import ubinascii
 import time
 import esp32
 import network
 
-from ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker
+from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker
 
 ## custom methods ##
-def get_cpu_temp(self): ## degree celsius
+def get_cpu_temp(): ## degree celsius
     return int((esp32.raw_temperature() - 32) * (5/9) * 10) /10
 
 ## configure wifi ##
-WIFI_SSID = '<ssid>'
-WIFI_PASSWORD = '<password>'
+WIFI_SSID = '<WIFI SSID>'
+WIFI_PASSWORD = '<WIFI PASSWORD>'
 
 def do_connect():
     wlan = network.WLAN(network.STA_IF)
@@ -29,9 +29,11 @@ def do_connect():
     print('network config:', wlan.ifconfig())
 
 # Define your Fichar.io credentials
-username = "your_username"
-passwd = "your_password"
-deviceID = "your_device_id"
+username = "<USERNAME>"
+passwd = "<PASSWORD>"
+deviceID = "<DEVICEID>"
+
+builtin_led = Pin(2, Pin.OUT)
 
 fichario = Fichario(
     uniqueId = ubinascii.hexlify(unique_id()).decode(),
@@ -42,7 +44,7 @@ fichario = Fichario(
     server   = "br1.data.fichar.io",
     KeepOn   = True,
     ssl      = True,
-    #led      = ,
+    led      = builtin_led,
     qos      = 0
 )
 
