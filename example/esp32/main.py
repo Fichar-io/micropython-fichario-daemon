@@ -1,3 +1,5 @@
+import gc
+RAM_SIZE = gc.mem_alloc() + gc.mem_free()
 from machine import Timer, unique_id, Pin, reset
 import ubinascii
 import time
@@ -9,6 +11,10 @@ from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck,
 ## custom methods ##
 def get_cpu_temp(): ## degree celsius
     return int((esp32.raw_temperature() - 32) * (5/9) * 10) /10
+
+def get_used_men():
+    global RAM_SIZE
+    return int((gc.mem_alloc()/RAM_SIZE)*1000)/10
 
 ## configure wifi ##
 WIFI_SSID = '<WIFI SSID>'
@@ -51,6 +57,10 @@ fichario.TIMESTAMP_METHOD = time.time
 fichario.add_new_device_info(DeviceInfoPkgMaker(
     name     = "cpu_temp",
     callback = get_cpu_temp
+))
+
+fichario.add_new_device_info(DeviceInfoPkgMaker(name="men_usage",
+    callback = get_used_men
 ))
 
 fichario.add_new_payload(PayloadPkgMaker(name = "hall", 

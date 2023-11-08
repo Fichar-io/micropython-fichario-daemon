@@ -1,3 +1,5 @@
+import gc
+RAM_SIZE = gc.mem_alloc() + gc.mem_free()
 from machine import Timer, unique_id, Pin, reset
 import ubinascii
 import time
@@ -8,6 +10,10 @@ from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck,
 nic = network.WIZNET5K()
 nic.active(True)
 nic.ifconfig("dhcp")
+
+def get_used_men():
+    global RAM_SIZE
+    return int((gc.mem_alloc()/RAM_SIZE)*1000)/10
 
 def foo1(msg=None):
     print("I am foo number 1", msg)
@@ -37,6 +43,10 @@ fichario = Fichario(
 )
 
 fichario.TIMESTAMP_METHOD = time.time
+
+fichario.add_new_device_info(DeviceInfoPkgMaker(name="men_usage",
+    callback = get_used_men
+))
 
 fichario.add_new_payload(PayloadPkgMaker(name="btn_state",
     callback = mock_btn,
