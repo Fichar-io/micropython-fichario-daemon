@@ -29,11 +29,16 @@ def VERB(*args, **kargs):
 def zfill(s, width):
 	return '{:0>{w}}'.format(s, w=width)
 
+_DEVICE_INFO_SUPPORTED = ["wall_voltage", "pw_voltage", "bat_voltage", "cpu_temp", "pw_status", "cpu_usage", "men_usage", "uptime", "latitude", "longitute", "orientation", "altitude", "timezone", "ip", "subcribed", "flag"]
+
 ## TRG check const
 TRG_GT = 0
 TRG_GE = 1
 TRG_LT = 2
 TRG_LE = 3
+
+class UnsupportedDeviceInfoKey(Exception):
+    pass
 
 class DeviceInfoPkgMaker:
     def __init__(self, name, callback, args=[], kwargs={}) -> None:
@@ -680,6 +685,7 @@ class Fichario:
         return
     
     def add_new_device_info(self, device_info:DeviceInfoPkgMaker):
+        if device_info.name not in _DEVICE_INFO_SUPPORTED: raise UnsupportedDeviceInfoKey(device_info.name)
         self._DEVICE_INFO.append(device_info)
 
     def add_new_payload(self, payload:PayloadPkgMaker):
