@@ -274,8 +274,7 @@ class FicharioRemoteDevice:
 
 class Fichario:
     def __init__(self, uniqueId, username, passwd, deviceID, timerID:int, timeout:int = 60, sleep_timeout:int = 100,server=None, KeepOn = True, ssl = False,led = None,qos = 0, mqtt_client_class=CustomMQTTClient) -> None:
-        if led is not None:
-            self.led = led
+        self.led = led
         if self.led is not None:
             self.led(0)
         self.SERVER = "br1.data.fichar.io"
