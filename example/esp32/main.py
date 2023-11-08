@@ -29,9 +29,7 @@ def do_connect():
     print('network config:', wlan.ifconfig())
 
 # Define your Fichar.io credentials
-username = "<USERNAME>"
-passwd = "<PASSWORD>"
-deviceID = "<DEVICEID>"
+from credentials import *
 
 builtin_led = Pin(2, Pin.OUT)
 
