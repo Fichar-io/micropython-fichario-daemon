@@ -1,10 +1,10 @@
-from machine import Timer, unique_id, Pin
+from machine import Timer, unique_id, Pin, reset
 import ubinascii
 import time
 import esp32
 import network
 
-from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker
+from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker, SubscriptionAction
 
 ## custom methods ##
 def get_cpu_temp(): ## degree celsius
@@ -61,6 +61,13 @@ fichario.add_new_payload(PayloadPkgMaker(name = "hall",
     trg      = 0,
     max_auto_range = True,
     min_auto_range = True
+))
+
+fichario.add_subscription_action(SubscriptionAction(
+    subtopic = "order66",
+    callback = reset,
+    trg_msg = "execute",
+    pass_rcv_msg = False
 ))
 
 tim2 = Timer(2)

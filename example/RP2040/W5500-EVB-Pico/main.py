@@ -1,13 +1,19 @@
-from machine import Timer, unique_id, Pin
+from machine import Timer, unique_id, Pin, reset
 import ubinascii
 import time
 import network
 
-from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker
+from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker, SubscriptionAction
 
 nic = network.WIZNET5K()
 nic.active(True)
 nic.ifconfig("dhcp")
+
+def foo1(msg=None):
+    print("I am foo number 1", msg)
+    
+def foo2(msg=None):
+    print("I am foo number 2", msg)
 
 MOCK_BTN_STATE = 0
 def mock_btn():
@@ -38,6 +44,23 @@ fichario.add_new_payload(PayloadPkgMaker(name="btn_state",
     min = 0,
     max = 1,
     trg = 0
+))
+
+fichario.add_subscription_action(SubscriptionAction(
+    subtopic = "foo1",
+    callback = foo1,
+))
+
+fichario.add_subscription_action(SubscriptionAction(
+    subtopic = "foo2",
+    callback = foo2,
+))
+
+fichario.add_subscription_action(SubscriptionAction(
+    subtopic = "order66",
+    callback = reset,
+    trg_msg = "execute",
+    pass_rcv_msg = False
 ))
 
 tim2 = Timer(-1)
