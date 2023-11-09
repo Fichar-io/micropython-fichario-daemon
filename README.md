@@ -29,7 +29,7 @@ mip.install('https://raw.githubusercontent.com/Fichar-io/micropython-fichario-da
 
 ```python
 # Import necessary modules
-from Fichario import Fichario, PayloadPkgMaker, FicharioRemoteDevice, SubscriptionAction
+from Fichario import Fichario, PayloadPkgMaker, FicharioRemoteDevice
 
 # Define your MQTT broker settings
 uniqueId = "your_unique_id"
