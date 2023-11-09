@@ -2,15 +2,15 @@
   "urls": [
     [
       "lib/ficharioCAL/__init__.py",
-      "github.com/Fichar-io/micropython-fichario-daemon/tree/main/src/ficharioCAL/__init__.py"
+      "https://raw.githubusercontent.com/Fichar-io/micropython-fichario-daemon/main/src/ficharioCAL/__init__.py"
     ],
     [
       "lib/ficharioCAL/ficharioMQTTClient2.py",
-      "github.com/Fichar-io/micropython-fichario-daemon/tree/main/src/ficharioCAL/ficharioMQTTClient2.py"
+      "https://raw.githubusercontent.com/Fichar-io/micropython-fichario-daemon/main/src/ficharioCAL/ficharioMQTTClient2.py"
     ],
     [
       "lib/ficharioCAL/mqttClient.py",
-      "github.com/Fichar-io/micropython-fichario-daemon/tree/main/src/ficharioCAL/mqttClient.py"
+      "https://raw.githubusercontent.com/Fichar-io/micropython-fichario-daemon/main/src/ficharioCAL/mqttClient.py"
     ]
   ],
   "deps": [
