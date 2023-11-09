@@ -22,7 +22,7 @@ MQTT broker settings:
 ```python
 # For micropython v1.20.0 or newer
 import mip
-mip.install('https://raw.githubusercontent.com/Fichar-io/micropython-fichario-daemon/main/package.json')
+mip.install('https://raw.githubusercontent.com/Fichar-io/micropython-fichario-daemon/development/package.json')
 ```
 
 ## Example Usage
