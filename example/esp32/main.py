@@ -54,8 +54,7 @@ fichario = Fichario(
 
 fichario.TIMESTAMP_METHOD = time.time
 
-fichario.add_new_device_info(DeviceInfoPkgMaker(
-    name     = "cpu_temp",
+fichario.add_new_device_info(DeviceInfoPkgMaker(name="cpu_temp",
     callback = get_cpu_temp
 ))
 
@@ -63,7 +62,7 @@ fichario.add_new_device_info(DeviceInfoPkgMaker(name="men_usage",
     callback = get_used_men
 ))
 
-fichario.add_new_payload(PayloadPkgMaker(name = "hall", 
+fichario.add_new_payload(PayloadPkgMaker(name="hall", 
     callback = esp32.hall_sensor,
     unit     = "unt",
     min      = 0,
@@ -73,8 +72,7 @@ fichario.add_new_payload(PayloadPkgMaker(name = "hall",
     min_auto_range = True
 ))
 
-fichario.add_subscription_action(SubscriptionAction(
-    subtopic = "order66",
+fichario.add_subscription_action(SubscriptionAction(subtopic="order66",
     callback = reset,
     trg_msg = "execute",
     pass_rcv_msg = False

@@ -56,18 +56,15 @@ fichario.add_new_payload(PayloadPkgMaker(name="btn_state",
     trg = 0
 ))
 
-fichario.add_subscription_action(SubscriptionAction(
-    subtopic = "foo1",
+fichario.add_subscription_action(SubscriptionAction(subtopic="foo1",
     callback = foo1,
 ))
 
-fichario.add_subscription_action(SubscriptionAction(
-    subtopic = "foo2",
+fichario.add_subscription_action(SubscriptionAction(subtopic="foo2",
     callback = foo2,
 ))
 
-fichario.add_subscription_action(SubscriptionAction(
-    subtopic = "order66",
+fichario.add_subscription_action(SubscriptionAction(subtopic="order66",
     callback = reset,
     trg_msg = "execute",
     pass_rcv_msg = False
