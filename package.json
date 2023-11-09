@@ -1,0 +1,11 @@
+{
+    "urls": [
+      ["ficharioCAL/__init__.py", "< github:yourusername >/example-lib/ficharioCAL/__init__.py"],
+      ["ficharioCAL/ficharioMQTTClient2.py", "< github:yourusername >/example-lib/ficharioCAL/ficharioMQTTClient2.py"],
+      ["ficharioCAL/mqttClient.py", "< github:yourusername >/example-lib/ficharioCAL/mqttClient.py"]
+    ],
+    "deps": [
+      ["umqtt.simple", "latest"]
+    ],
+    "version": "0.1.0"
+  }
