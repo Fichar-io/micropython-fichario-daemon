@@ -29,11 +29,16 @@ def VERB(*args, **kargs):
 def zfill(s, width):
 	return '{:0>{w}}'.format(s, w=width)
 
+_DEVICE_INFO_SUPPORTED = ["wall_voltage", "pw_voltage", "bat_voltage", "cpu_temp", "pw_status", "cpu_usage", "men_usage", "uptime", "latitude", "longitute", "orientation", "altitude", "timezone", "ip", "subcribed", "flag"]
+
 ## TRG check const
 TRG_GT = 0
 TRG_GE = 1
 TRG_LT = 2
 TRG_LE = 3
+
+class UnsupportedDeviceInfoKey(Exception):
+    pass
 
 class DeviceInfoPkgMaker:
     def __init__(self, name, callback, args=[], kwargs={}) -> None:
@@ -141,6 +146,33 @@ class PayloadPkgMaker:
                 "max" : self.max,
                 "trg" : trg
             }
+
+class SubscriptionAction:
+    def __init__(self, subtopic:str, callback:callable, trg_msg=None, checktime:int=-1, pass_rcv_msg=True) -> None:
+        self._subtopic = subtopic
+        self._callback = callback
+        self._trg_msg = trg_msg
+        self._checktime = checktime ## have no idea how to use it... yet
+        self._pass_rcv_msg = pass_rcv_msg
+        
+        self._topic = ""
+    
+    def _check_for_trg(self, msg):
+        if self._trg_msg is not None:
+            if self._trg_msg == msg:
+                self._do_proceed(msg=msg)
+        else: 
+            self._do_proceed(msg=msg)
+
+    def _do_proceed(self, msg):
+        try:
+            if self._pass_rcv_msg: self._callback(msg)
+            else: self._callback()
+        except Exception as e:
+            print(e)
+
+    def proceed_callback(self, msg):
+        self._check_for_trg(msg=msg)
 
 class FicharioRemoteDevice:
     def __init__(self, 
@@ -369,6 +401,8 @@ class Fichario:
         self.mqtt_client_class = mqtt_client_class
         
         self._remote_device = {}
+        
+        self._subscription_actions = {}
 
     ##################################################################
     
@@ -430,11 +464,13 @@ class Fichario:
                 self._turn_led_off()
                 self._start_reconnect_loop()
             finally:
+                self.broker.check_msg()
                 self._IDLE_COUNT = 0
                 return
         else:
             VERB("!") ## just to break line
             self._IDLE_COUNT = self._IDLE_COUNT + 1000
+            self.broker.check_msg()
             return
     
     ## keep trying to reconnect
@@ -560,6 +596,12 @@ class Fichario:
     def _turn_led_off(self):
         if self.led is not None: self.led(0)
     
+    def _check_for_subscription_action(self, topic, msg):
+        #print(topic, msg)
+        subscription_action = self._subscription_actions.get(topic.decode(), None)
+        if subscription_action is not None:
+            subscription_action.proceed_callback(msg.decode())
+
     ##################################################################
     
     def connect(self):
@@ -571,6 +613,8 @@ class Fichario:
             print ('connecting to', self.SERVER, 'MQTT server...')
             self.broker = self.mqtt_client_class(self.CLIENT_ID, self.SERVER, self.PORT, self.USER, self.PASSWORD, self._TIMEOUT)
         
+        self.broker.set_callback(self._check_for_subscription_action)
+        
         try:
             VERB("trying to connect...", end=" ")
             self._TRYING_CONNECT_FLAG = True
@@ -580,6 +624,9 @@ class Fichario:
             self.MQTT_CONNECTION_STATE = True
             self._RECONNECT_ATEMPT_COUNT = 0
             self._turn_led_on()
+            
+            if len(self._subscription_actions) > 0:
+                self.broker.subscribe(self.TOPIC + "/#")
             
             if self.get_buffer_len() > 0: self._start_buffer_consumer_loop()
             else: self._start_idle_loop()
@@ -638,10 +685,15 @@ class Fichario:
         return
     
     def add_new_device_info(self, device_info:DeviceInfoPkgMaker):
+        if device_info.name not in _DEVICE_INFO_SUPPORTED: raise UnsupportedDeviceInfoKey(device_info.name)
         self._DEVICE_INFO.append(device_info)
 
     def add_new_payload(self, payload:PayloadPkgMaker):
         self._PAYLOAD.append(payload)
+
+    def add_subscription_action(self, subaction:SubscriptionAction):
+        subaction._topic = self.TOPIC + "/" + subaction._subtopic
+        self._subscription_actions[subaction._topic] = subaction
 
     ##################################################################
     def get_buffer_len(self):

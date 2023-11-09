@@ -1,13 +1,25 @@
-from machine import Timer, unique_id, Pin
+import gc
+RAM_SIZE = gc.mem_alloc() + gc.mem_free()
+from machine import Timer, unique_id, Pin, reset
 import ubinascii
 import time
 import network
 
-from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker
+from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker, SubscriptionAction
 
 nic = network.WIZNET5K()
 nic.active(True)
 nic.ifconfig("dhcp")
+
+def get_used_men():
+    global RAM_SIZE
+    return int((gc.mem_alloc()/RAM_SIZE)*1000)/10
+
+def foo1(msg=None):
+    print("I am foo number 1", msg)
+    
+def foo2(msg=None):
+    print("I am foo number 2", msg)
 
 MOCK_BTN_STATE = 0
 def mock_btn():
@@ -32,12 +44,30 @@ fichario = Fichario(
 
 fichario.TIMESTAMP_METHOD = time.time
 
+fichario.add_new_device_info(DeviceInfoPkgMaker(name="men_usage",
+    callback = get_used_men
+))
+
 fichario.add_new_payload(PayloadPkgMaker(name="btn_state",
     callback = mock_btn,
     unit = "unt",
     min = 0,
     max = 1,
     trg = 0
+))
+
+fichario.add_subscription_action(SubscriptionAction(subtopic="foo1",
+    callback = foo1,
+))
+
+fichario.add_subscription_action(SubscriptionAction(subtopic="foo2",
+    callback = foo2,
+))
+
+fichario.add_subscription_action(SubscriptionAction(subtopic="order66",
+    callback = reset,
+    trg_msg = "execute",
+    pass_rcv_msg = False
 ))
 
 tim2 = Timer(-1)

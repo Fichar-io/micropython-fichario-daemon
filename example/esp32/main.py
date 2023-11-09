@@ -1,14 +1,20 @@
-from machine import Timer, unique_id, Pin
+import gc
+RAM_SIZE = gc.mem_alloc() + gc.mem_free()
+from machine import Timer, unique_id, Pin, reset
 import ubinascii
 import time
 import esp32
 import network
 
-from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker
+from ficharioCAL.ficharioMQTTClient2 import Fichario, PayloadPkgMaker, TrgCheck, DeviceInfoPkgMaker, SubscriptionAction
 
 ## custom methods ##
 def get_cpu_temp(): ## degree celsius
     return int((esp32.raw_temperature() - 32) * (5/9) * 10) /10
+
+def get_used_men():
+    global RAM_SIZE
+    return int((gc.mem_alloc()/RAM_SIZE)*1000)/10
 
 ## configure wifi ##
 WIFI_SSID = '<WIFI SSID>'
@@ -48,12 +54,15 @@ fichario = Fichario(
 
 fichario.TIMESTAMP_METHOD = time.time
 
-fichario.add_new_device_info(DeviceInfoPkgMaker(
-    name     = "cpu_temp",
+fichario.add_new_device_info(DeviceInfoPkgMaker(name="cpu_temp",
     callback = get_cpu_temp
 ))
 
-fichario.add_new_payload(PayloadPkgMaker(name = "hall", 
+fichario.add_new_device_info(DeviceInfoPkgMaker(name="men_usage",
+    callback = get_used_men
+))
+
+fichario.add_new_payload(PayloadPkgMaker(name="hall", 
     callback = esp32.hall_sensor,
     unit     = "unt",
     min      = 0,
@@ -61,6 +70,12 @@ fichario.add_new_payload(PayloadPkgMaker(name = "hall",
     trg      = 0,
     max_auto_range = True,
     min_auto_range = True
+))
+
+fichario.add_subscription_action(SubscriptionAction(subtopic="order66",
+    callback = reset,
+    trg_msg = "execute",
+    pass_rcv_msg = False
 ))
 
 tim2 = Timer(2)

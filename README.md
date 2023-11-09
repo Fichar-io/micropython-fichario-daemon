@@ -29,7 +29,7 @@ mip.install('https://raw.githubusercontent.com/Fichar-io/micropython-fichario-da
 
 ```python
 # Import necessary modules
-from Fichario import Fichario, PayloadPkgMaker, FicharioRemoteDevice
+from Fichario import Fichario, PayloadPkgMaker, FicharioRemoteDevice, SubscriptionAction
 
 # Define your MQTT broker settings
 uniqueId = "your_unique_id"
@@ -66,6 +66,14 @@ fichario.add_new_payload(PayloadPkgMaker(name="your_payload_name",
     min=0,
     max=100,
     trg=1
+))
+
+# Create and add new SubscriptionAction instance for subscribing a topic
+fichario.add_subscription_action(SubscriptionAction(
+    subtopic = "foo",
+    callback = foo,
+    trg_msg = "100",
+    pass_rcv_msg = False
 ))
 
 # Connect to the MQTT broker
