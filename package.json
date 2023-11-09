@@ -1,11 +1,23 @@
 {
-    "urls": [
-      ["lib/ficharioCAL/__init__.py", "github.com/Fichar-io/micropython-fichario-daemon/tree/main/src/ficharioCAL/__init__.py"],
-      ["lib/ficharioCAL/ficharioMQTTClient2.py", "github.com/Fichar-io/micropython-fichario-daemon/tree/main/src/ficharioCAL/ficharioMQTTClient2.py"],
-      ["lib/ficharioCAL/mqttClient.py", "github.com/Fichar-io/micropython-fichario-daemon/tree/main/src/ficharioCAL/mqttClient.py"]
+  "urls": [
+    [
+      "lib/ficharioCAL/__init__.py",
+      "github.com/Fichar-io/micropython-fichario-daemon/tree/main/src/ficharioCAL/__init__.py"
     ],
-    "deps": [
-      ["umqtt.simple", "latest"]
+    [
+      "lib/ficharioCAL/ficharioMQTTClient2.py",
+      "github.com/Fichar-io/micropython-fichario-daemon/tree/main/src/ficharioCAL/ficharioMQTTClient2.py"
     ],
-    "version": "0.1.0"
-  }
+    [
+      "lib/ficharioCAL/mqttClient.py",
+      "github.com/Fichar-io/micropython-fichario-daemon/tree/main/src/ficharioCAL/mqttClient.py"
+    ]
+  ],
+  "deps": [
+    [
+      "umqtt.simple",
+      "latest"
+    ]
+  ],
+  "version": "0.1.0"
+}
