@@ -17,11 +17,19 @@ MQTT broker settings:
    - MQTT username and password
    - Device ID
 
+## Instalation
+
+```python
+# For micropython v1.20.0 or newer
+import mip
+mip.install("github:Fichar-io/micropython-fichario-daemon/blob/main/package.json")
+```
+
 ## Example Usage
 
 ```python
 # Import necessary modules
-from Fichario import Fichario, PayloadPkgMaker, FicharioRemoteDevice
+from Fichario import Fichario, PayloadPkgMaker, FicharioRemoteDevice, SubscriptionAction
 
 # Define your MQTT broker settings
 uniqueId = "your_unique_id"
@@ -76,8 +84,4 @@ In this example, we set up an MQTT client using the `Fichario` class, define MQT
 
 ## Documentation
 
-For detailed documentation and more information on the `Fichario` class and its methods, refer to the official [Fichario documentation](https://example.com/documentation).
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+For detailed documentation and more information on the `Fichario` class and its methods, refer to the official [Fichario documentation](https://fichar.io/documentation#/MQTTBroker).
