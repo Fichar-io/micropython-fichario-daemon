@@ -22,7 +22,7 @@ MQTT broker settings:
 ```python
 # For micropython v1.20.0 or newer
 import mip
-mip.install('https://raw.githubusercontent.com/Fichar-io/micropython-fichario-daemon/main/package.json')
+mip.install('https://raw.githubusercontent.com/Fichar-io/micropython-fichario-daemon/development-release-bin/package.json')
 ```
 
 ## Instalation From Source
@@ -30,7 +30,7 @@ mip.install('https://raw.githubusercontent.com/Fichar-io/micropython-fichario-da
 ```python
 # For micropython v1.20.0 or newer
 import mip
-mip.install('https://raw.githubusercontent.com/Fichar-io/micropython-fichario-daemon/main/src/ficharioCAL/package.json')
+mip.install('https://raw.githubusercontent.com/Fichar-io/micropython-fichario-daemon/development-release-bin/src/ficharioCAL/package.json')
 ```
 
 ## Example Usage
