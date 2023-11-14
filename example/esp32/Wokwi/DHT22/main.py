@@ -80,12 +80,15 @@ fichario.add_new_payload(PayloadPkgMaker(name="temperature",
     min_auto_range = True
 ))
 
-def do(foo=None):
-    sensor.measure()
-    fichario.just_do_it()
+## if any function must be called before the data publish, you can use "preflight" system
+## preflight routines will be executed in addition orther before device info or playload update
+fichario.add_preflight_routine(
+    callback = sensor.measure,
+    label    = "DHT22 update measure"
+)
 
 tim2 = Timer(2)
 def main():
     print("starting main function...")
-    do() ## First run
-    tim2.init(period=60000, mode=Timer.PERIODIC, callback=do) ## calls "just do it" periodcaly
+    fichario.just_do_it() ## First run
+    tim2.init(period=60000, mode=Timer.PERIODIC, callback=fichario.just_do_it) ## calls "just do it" periodcaly
