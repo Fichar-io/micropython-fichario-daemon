@@ -403,6 +403,8 @@ class Fichario:
         self._remote_device = {}
         
         self._subscription_actions = {}
+        
+        self._preflight_routine_list = []
 
     ##################################################################
     
@@ -695,6 +697,9 @@ class Fichario:
         subaction._topic = self.TOPIC + "/" + subaction._subtopic
         self._subscription_actions[subaction._topic] = subaction
 
+    def add_preflight_routine(self, callback:callable, callback_args=[], callback_kwargs={}, label:str=None):
+        self._preflight_routine_list.append([callback, callback_args, callback_kwargs, label])
+
     ##################################################################
     def get_buffer_len(self):
         return len(self._BUFFER)
@@ -727,6 +732,17 @@ class Fichario:
             self.message["timestamp"] = self.TIMESTAMP_METHOD()
         except Exception as e:
             VERB(e)
+
+    def do_preflight(self):
+        for preflight_callback, preflight_callback_args, preflight_callback_kwargs, label in self._preflight_routine_list:
+            try:
+                if label is None: VERB("calling [", f"{bcolors.OKCYAN}{preflight_callback}{bcolors.ENDC}", "]...", end=" ")
+                else: VERB("calling [", f"{bcolors.OKCYAN}{label}{bcolors.ENDC}", "]...", end=" ")
+                preflight_callback(*preflight_callback_args, **preflight_callback_kwargs)
+                VERB(f"{bcolors.OKGREEN}ok!{bcolors.ENDC}")
+            except Exception as e:
+                VERB(f"{bcolors.FAIL}fail!{bcolors.ENDC}")
+                VERB(e)
     
     def set_bit(self, bit:int, value:int):
         try:
@@ -742,6 +758,10 @@ class Fichario:
 
     def just_update(self, src=None):
         VERB(f"{bcolors.OKBLUE}## Local attributes ##{bcolors.ENDC}")
+
+        VERB(f"{bcolors.BOLD}Executing Preflight routines...{bcolors.ENDC}")
+        self.do_preflight()
+
         try:
             VERB("get timestamp...", end=" ")
             self.update_timestamp()
